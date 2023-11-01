@@ -68,7 +68,26 @@ async function checkUsernameExists(req, res, next) {
   }
 */
 function checkPasswordLength(req, res, next) {
-  next()
+  if (req.session.user) {
+    req.session.destroy(err => {
+      if (err) {
+        next(err)
+      } else {
+        res.json({ message: 'logged out' })
+      }
+    })
+  } else {
+    // check for password length
+    const { password } = req.body
+    // validate the password
+    if (!password || password.length < 3) {
+      // send an error message
+      next({ message: 'Password must be at least 3 characters long', status: 400 })
+    } else {
+      // proceed to the next middleware
+      next()
+  }
+}
 }
 
 // Don't forget to add these to the `exports` object so they can be required in other modules
