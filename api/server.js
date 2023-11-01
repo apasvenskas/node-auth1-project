@@ -1,8 +1,13 @@
+// const db = require('../index')
+const Knex = require('knex');
+const knex = Knex({client: 'sqlite3',connection: {filename: './db.sqlite'},useNullAsDefault: true})
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const userRoutes = require('./users/users-router')
 const authRoutes = require('./auth/auth-router')
+const session = require('express-session')
+const Store = require('connect-session-knex')(session)
 /**
   Do what needs to be done to support sessions with the `express-session` package!
   To respect users' privacy, do NOT send them a cookie unless they log in.
@@ -17,6 +22,26 @@ const authRoutes = require('./auth/auth-router')
  */
 
 const server = express();
+
+server.use(session({
+  name: 'chocalateShip',
+  secret: 'shh',
+  saveUninitialized: false,
+  resave: false,
+  store: new Store({
+    knex,
+    createTable: true,
+    clearInterval: 1000 * 60 * 10,
+    tableName: 'sessions',
+    sidfieldname: 'sid',
+  }),
+  cookie: {
+    maxAge: 1000 * 60 * 10,
+    secure: false,
+    httpOnly: true,
+    // sameSite: 'none'
+  }
+}))
 
 server.use(helmet());
 server.use(express.json());
