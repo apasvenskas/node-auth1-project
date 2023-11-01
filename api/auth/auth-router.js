@@ -86,7 +86,18 @@ const {
  */
 
   router.get('/logout', (req, res, next) => {
-    res.json('logout')
+    if (req.session) {
+      req.session.destroy(err => {
+        if (err) {
+          next(err);
+        } else {
+          res.clearCookie('chocolatechip');
+          res.json({ message: 'logged out' });
+        }
+      });
+    } else {
+      res.json({ message: 'No session to destroy' });
+    }
   })
 
  

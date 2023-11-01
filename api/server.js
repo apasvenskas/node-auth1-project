@@ -24,7 +24,7 @@ const Store = require('connect-session-knex')(session)
 const server = express();
 
 server.use(session({
-  name: 'chocalateShip',
+  name: 'chocolatechip',
   secret: 'shh',
   saveUninitialized: false,
   resave: false,
@@ -39,7 +39,6 @@ server.use(session({
     maxAge: 1000 * 60 * 10,
     secure: false,
     httpOnly: true,
-    // sameSite: 'none'
   }
 }))
 
